@@ -6,43 +6,81 @@ TMP="$(mktemp -d -t server-essentials)"
 
 [ -d "$PLUGINS" ] || mkdir ./plugins/
 
+fail() {
+    rm -fdr "$TMP"
+    echo -e "\n$(tput setaf 1)Error: $(tput sgr0)$@"
+    exit 1
+}
+
+task() {
+    echo -en "$(tput setaf 3)>$(tput sgr0) $(tput bold)$@$(tput sgr0) "
+}
+
+taskdone() {
+    echo -en "\r$(tput setaf 2)✔$(tput sgr0)\n"
+}
+
+rawdl() {
+    curl -fsSL "$1" -o "$2" || return 1
+}
+
 jenkins() {
     cd "$TMP"
-    mkdir "$1" && cd "$1" || (echo "Failed to create folder for $1"; exit 1)
-    curl -fsSL "$2/job/$1/lastSuccessfulBuild/artifact/*zip*/archive.zip" -o all.zip || (echo "Failed to download $1 from $2"; exit 1)
+    mkdir "$1" && cd "$1" || fail "Failed to create folder for $1"
+    rawdl "$2/job/$1/lastSuccessfulBuild/artifact/*zip*/archive.zip" all.zip || fail "Failed to download $1 from $2"
     unzip all.zip > /dev/null && mv ./archive/* . && rm -fdr ./archive/
 }
 
 devbukkit() {
+    task "Installing $1"
     cd "$TMP"
-    mkdir "$1" && cd "$1" || (echo "Failed to create folder for $1"; exit 1)
-    curl -fsSL "https://dev.bukkit.org/projects/$2/files/latest" -o "$1.jar" || (echo "Failed to download $1"; exit 1)
+    mkdir "$1" && cd "$1" || fail "Failed to create folder for $1"
+    rawdl "https://dev.bukkit.org/projects/$2/files/latest" "$1.jar" || fail "Failed to download $1"
     mv ./*.jar "$PLUGINS"
+    taskdone
+
 }
 
-echo "Installing Spigot"
+task "Installing Spigot"
 jenkins Spigot "http://ci.getbukkit.org"
 mv *.jar "$DIR"
+taskdone
 
-echo "Installing Essentials"
+task "Installing Essentials"
 jenkins EssentialsX "https://ci.drtshock.net"
 cp Essentials/target/*.jar EssentialsChat/target/*.jar "$PLUGINS"
+taskdone
 
-echo "Installing PlugMan"
+task "Installing ProtocolLib"
+jenkins ProtocolLib "http://ci.dmulloy2.net"
+cp modules/ProtocolLib/target/*.jar "$PLUGINS"
+taskdone
+
+task "Installing Multiverse"
+rawdl "https://dev.bukkit.org/projects/multiverse-core/files/912081/download" "$PLUGINS/Multiverse-Core-2.5-b717.jar" || fail "Failed to install Multiverse-Core"
+rawdl "https://dev.bukkit.org/projects/multiverse-netherportals/files/772769/download" "$PLUGINS/Multiverse-NetherPortals-2.5.jar" || fail "Failed to install Multiverse-NetherPortals"
+taskdone
+
 devbukkit PlugMan plugman
-echo "Installing PermissionsEx"
 devbukkit PermissionsEx permissionsex
-echo "Installing WorldEdit"
+devbukkit Vault vault
 devbukkit WorldEdit worldedit
+devbukkit WorldGuard worldguard
 
-echo "Configuring"
-cd $DIR
+task "Configuring"
+cd "$DIR"
 [ -f eula.txt ] || echo "eula=true" > eula.txt
 
 echo '#!/bin/bash
 cd "$(dirname "$0")"
 java -Xmx4G -jar spigot-*.jar' > start.sh
 chmod +x start.sh
+
+taskdone
+
+task "Cleaning up"
+rm -fdr "$TMP"
+taskdone
 
 echo "
 
