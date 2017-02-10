@@ -1,0 +1,53 @@
+#!/bin/bash
+
+DIR="$PWD"
+PLUGINS="$PWD/plugins/"
+TMP="$(mktemp -d -t server-essentials)"
+
+[ -d "$PLUGINS" ] || mkdir ./plugins/
+
+jenkins() {
+    cd "$TMP"
+    mkdir "$1" && cd "$1" || (echo "Failed to create folder for $1"; exit 1)
+    curl -fsSL "$2/job/$1/lastSuccessfulBuild/artifact/*zip*/archive.zip" -o all.zip || (echo "Failed to download $1 from $2"; exit 1)
+    unzip all.zip > /dev/null && mv ./archive/* . && rm -fdr ./archive/
+}
+
+devbukkit() {
+    cd "$TMP"
+    mkdir "$1" && cd "$1" || (echo "Failed to create folder for $1"; exit 1)
+    curl -fsSL "https://dev.bukkit.org/projects/$2/files/latest" -o "$1.jar" || (echo "Failed to download $1"; exit 1)
+    mv ./*.jar "$PLUGINS"
+}
+
+echo "Installing Spigot"
+jenkins Spigot "http://ci.getbukkit.org"
+mv *.jar "$DIR"
+
+echo "Installing Essentials"
+jenkins EssentialsX "https://ci.drtshock.net"
+cp Essentials/target/*.jar EssentialsChat/target/*.jar "$PLUGINS"
+
+echo "Installing PlugMan"
+devbukkit PlugMan plugman
+echo "Installing PermissionsEx"
+devbukkit PermissionsEx permissionsex
+echo "Installing WorldEdit"
+devbukkit WorldEdit worldedit
+
+echo "Configuring"
+cd $DIR
+[ -f eula.txt ] || echo "eula=true" > eula.txt
+
+echo '#!/bin/bash
+cd "$(dirname "$0")"
+java -Xmx4G -jar spigot-*.jar' > start.sh
+chmod +x start.sh
+
+echo "
+
+Server setup complete. You can run the server with ./start.sh
+
+"
+
+sleep 1
