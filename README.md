@@ -8,4 +8,24 @@ I've only tested this on macOS Sierra 10.12.2 so far, but \*crosses fingers\* it
 
 As a secondary usage, you can do the following and run it without downloading the script to your harddrive:
 
-    curl -fsSL https://raw.githubusercontent.com/Rayzr522/server-essentials/master/server-essentials | bash -"
+```bash
+curl -fsSL https://raw.githubusercontent.com/Rayzr522/server-essentials/master/server-essentials | bash -
+```
+
+### Example usage
+
+```bash
+cd ~/Desktop
+mkdir MyServer
+cd MyServer
+/path/to/the/script/server-essentials
+```
+
+**OR**
+
+```bash
+cd ~/Desktop
+mkdir MyServer
+cd MyServer
+curl -fsSL https://raw.githubusercontent.com/Rayzr522/server-essentials/master/server-essentials | bash -
+```
