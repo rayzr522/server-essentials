@@ -7,7 +7,7 @@ TMP="$(mktemp -d -t server-essentials)"
 [ -d "$PLUGINS" ] || mkdir ./plugins/
 
 fail() {
-    rm -fdr "$TMP"
+    rm -fr "$TMP"
     echo -e "\n$(tput setaf 1)Error: $(tput sgr0)$@"
     exit 1
 }
@@ -28,7 +28,7 @@ jenkins() {
     cd "$TMP"
     mkdir "$1" && cd "$1" || fail "Failed to create folder for $1"
     rawdl "$2/job/$1/lastSuccessfulBuild/artifact/*zip*/archive.zip" all.zip || fail "Failed to download $1 from $2"
-    unzip all.zip > /dev/null && mv ./archive/* . && rm -fdr ./archive/
+    unzip all.zip > /dev/null && mv ./archive/* . && rm -fr ./archive/
 }
 
 devbukkit() {
@@ -79,7 +79,7 @@ chmod +x start.sh
 taskdone
 
 task "Cleaning up"
-rm -fdr "$TMP"
+rm -fr "$TMP"
 taskdone
 
 echo "
