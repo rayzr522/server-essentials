@@ -8,12 +8,30 @@ TMP="$(mktemp -d -t server-essentials)"
 
 trap "fail Cancelled install" SIGINT
 
+# Utility methods
 fail() {
-    rm -fr "$TMP"
+    taskfail
+    clean
+
     echo -e "\n$(tput setaf 1)Error: $(tput sgr0)$@"
     exit 1
 }
 
+clean() {
+    rm -fr "$TMP"
+}
+
+configure() {
+    cd "$DIR"
+    [ -f eula.txt ] || echo "eula=true" > eula.txt
+
+    echo '#!/bin/bash
+cd "$(dirname "$0")"
+java -Xmx4G -jar spigot-*.jar' > start.sh
+    chmod +x start.sh
+}
+
+# Task methods
 task() {
     echo -en "$(tput setaf 3)»$(tput sgr0) $(tput bold)$@$(tput sgr0) "
 }
@@ -22,72 +40,81 @@ taskdone() {
     echo -en "\r$(tput setaf 2)✔$(tput sgr0)\n"
 }
 
-rawdl() {
-    curl -fsSL "$1" -o "$2" || return 1
+taskfail() {
+    echo -en "\r$(tput setaf 1)✖$(tput sgr0)\n"
+}
+
+# Download methods
+get-file() {
+    curl -fsSL "$1" -o "$2" 2> /dev/null || return 1
 }
 
 jenkins() {
-    cd "$TMP"
-    mkdir "$1" && cd "$1" || fail "Failed to create folder for $1"
-    rawdl "$2/job/$1/lastSuccessfulBuild/artifact/*zip*/archive.zip" all.zip || fail "Failed to download $1 from $2"
-    unzip all.zip > /dev/null && mv ./archive/* . && rm -fr ./archive/
-}
+    task "Installing $1 from $2"
 
-devbukkit() {
-    task "Installing $1"
     cd "$TMP"
     mkdir "$1" && cd "$1" || fail "Failed to create folder for $1"
-    rawdl "https://dev.bukkit.org/projects/$2/files/latest" "$1.jar" || fail "Failed to download $1"
-    mv ./*.jar "$PLUGINS"
+    get-file "$2/job/$1/lastSuccessfulBuild/artifact/*zip*/archive.zip" all.zip || fail "Failed to download $1 from $2"
+    unzip all.zip > /dev/null && mv ./archive/* . && rm -fr ./archive/ || fail "Failed to unzip $1"
+
+    shift 2
+    OUTPUT="$1"
+    shift
+
+    for folder in $@; do
+        mv ./"$folder"/*.jar "$OUTPUT"
+    done
+
     taskdone
-
 }
 
-task "Installing Spigot"
-jenkins Spigot "http://ci.getbukkit.org"
-mv *.jar "$DIR"
-taskdone
+bukkit() {
+    task "Installing $1"
 
-task "Installing Essentials"
-jenkins EssentialsX "https://ci.drtshock.net"
-cp Essentials/target/*.jar EssentialsChat/target/*.jar "$PLUGINS"
-taskdone
+    cd "$TMP"
+    mkdir "$1" && cd "$1" || fail "Failed to create folder for $1"
+    get-file "https://dev.bukkit.org/projects/$2/files/latest" "$1.jar" || fail "Failed to download $1"
+    mv ./*.jar "$PLUGINS"
 
-task "Installing ProtocolLib"
-jenkins ProtocolLib "http://ci.dmulloy2.net"
-cp modules/ProtocolLib/target/*.jar "$PLUGINS"
-taskdone
+    taskdone
+}
+
+
+
+###########################################################################
+##################### ACTUALLY DOWNLOAD SOME CRAP NOW #####################
+###########################################################################
+
+
+
+jenkins Spigot "http://ci.getbukkit.org" "$DIR" .
+jenkins EssentialsX "https://ci.drtshock.net" "$PLUGINS" Essentials/target EssentialsChat/target
+jenkins ProtocolLib "http://ci.dmulloy2.net" "$PLUGINS" modules/ProtocolLib/target
+
+bukkit PlugMan plugman
+bukkit PermissionsEx permissionsex
+bukkit Vault vault
+bukkit WorldEdit worldedit
+bukkit WorldGuard worldguard
 
 task "Installing Multiverse"
-rawdl "https://dev.bukkit.org/projects/multiverse-core/files/912081/download" "$PLUGINS/Multiverse-Core-2.5-b717.jar" || fail "Failed to install Multiverse-Core"
-rawdl "https://dev.bukkit.org/projects/multiverse-netherportals/files/772769/download" "$PLUGINS/Multiverse-NetherPortals-2.5.jar" || fail "Failed to install Multiverse-NetherPortals"
+get-file "https://dev.bukkit.org/projects/multiverse-core/files/912081/download" "$PLUGINS/Multiverse-Core-2.5-b717.jar" || fail "Failed to install Multiverse-Core"
+get-file "https://dev.bukkit.org/projects/multiverse-netherportals/files/772769/download" "$PLUGINS/Multiverse-NetherPortals-2.5.jar" || fail "Failed to install Multiverse-NetherPortals"
 taskdone
 
-devbukkit PlugMan plugman
-devbukkit PermissionsEx permissionsex
-devbukkit Vault vault
-devbukkit WorldEdit worldedit
-devbukkit WorldGuard worldguard
+task "Configuring"; configure; taskdone
+task "Cleaning up"; clean; taskdone
 
-task "Configuring"
-cd "$DIR"
-[ -f eula.txt ] || echo "eula=true" > eula.txt
 
-echo '#!/bin/bash
-cd "$(dirname "$0")"
-java -Xmx4G -jar spigot-*.jar' > start.sh
-chmod +x start.sh
 
-taskdone
+###########################################################################
+#################### ALL DONE NOW, NOTHING TO SEE HERE ####################
+###########################################################################
 
-task "Cleaning up"
-rm -fr "$TMP"
-taskdone
 
-echo "
 
+echo "$(tput smul)$(tput setaf 2)$(tput bold)
 Server setup complete. You can run the server with ./start.sh
-
-"
+$(tput rmul)$(tput sgr0)"
 
 sleep 1
