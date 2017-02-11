@@ -116,5 +116,3 @@ task "Cleaning up"; clean; taskdone
 echo "$(tput smul)$(tput setaf 2)$(tput bold)
 Server setup complete. You can run the server with ./start.sh
 $(tput rmul)$(tput sgr0)"
-
-sleep 1
