@@ -6,6 +6,8 @@ TMP="$(mktemp -d -t server-essentials)"
 
 [ -d "$PLUGINS" ] || mkdir ./plugins/
 
+trap "fail Cancelled install" SIGINT
+
 fail() {
     rm -fr "$TMP"
     echo -e "\n$(tput setaf 1)Error: $(tput sgr0)$@"
@@ -13,7 +15,7 @@ fail() {
 }
 
 task() {
-    echo -en "$(tput setaf 3)>$(tput sgr0) $(tput bold)$@$(tput sgr0) "
+    echo -en "$(tput setaf 3)»$(tput sgr0) $(tput bold)$@$(tput sgr0) "
 }
 
 taskdone() {
