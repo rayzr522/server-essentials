@@ -9,7 +9,7 @@ TMP="$(mktemp -d -t server-essentials)"
 trap "fail Cancelled install" SIGINT
 
 # Utility methods
-fail() {
+function fail {
     taskfail
     clean
 
@@ -17,11 +17,11 @@ fail() {
     exit 1
 }
 
-clean() {
+function clean {
     rm -fr "$TMP"
 }
 
-configure() {
+function configure {
     cd "$DIR"
     [ -f eula.txt ] || echo "eula=true" > eula.txt
 
@@ -32,24 +32,24 @@ java -Xmx4G -jar spigot-*.jar' > start.sh
 }
 
 # Task methods
-task() {
+function task {
     echo -en "$(tput setaf 3)»$(tput sgr0) $(tput bold)$@$(tput sgr0) "
 }
 
-taskdone() {
+function taskdone {
     echo -en "\r$(tput setaf 2)✔$(tput sgr0)\n"
 }
 
-taskfail() {
+function taskfail {
     echo -en "\r$(tput setaf 1)✖$(tput sgr0)\n"
 }
 
 # Download methods
-get-file() {
+function get-file {
     curl -fsSL "$1" -o "$2" 2> /dev/null || return 1
 }
 
-jenkins() {
+function jenkins {
     task "Installing $1 from $2"
 
     cd "$TMP"
@@ -68,7 +68,7 @@ jenkins() {
     taskdone
 }
 
-bukkit() {
+function bukkit {
     task "Installing $1"
 
     cd "$TMP"
