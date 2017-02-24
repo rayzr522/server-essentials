@@ -1,5 +1,7 @@
 #!/bin/bash
 
+MC_VERSION="1.11.2"
+
 DIR="$PWD"
 PLUGINS="$PWD/plugins/"
 TMP="$(mktemp -d -t server-essentials)"
@@ -86,8 +88,10 @@ function bukkit {
 ###########################################################################
 
 
+task "Installing Spigot $MC_VERSION"
+get-file "https://cdn.getbukkit.org/spigot/spigot-$MC_VERSION.jar" "spigot-$MC_VERSION.jar" || fail "Failed to install Spigot $MC_VERSION"
+taskdone
 
-jenkins Spigot "http://ci.getbukkit.org" "$DIR" .
 jenkins EssentialsX "https://ci.drtshock.net" "$PLUGINS" Essentials/target EssentialsChat/target
 jenkins ProtocolLib "http://ci.dmulloy2.net" "$PLUGINS" modules/ProtocolLib/target
 
