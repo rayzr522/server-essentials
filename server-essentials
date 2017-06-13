@@ -28,7 +28,7 @@ function fail {
     taskfail
     clean
 
-    echo -e "\n$(tput setaf 1)Error: $(tput sgr0)$@"
+    echo -e "\n$(tput setaf 1)Error: $(tput sgr0)$*"
     exit 1
 }
 
@@ -37,7 +37,7 @@ function clean {
 }
 
 function configure {
-    cd "$DIR"
+    cd "$DIR" || fail "Could not find server directory"
     [ -f eula.txt ] || echo "eula=true" > eula.txt
 
     echo '#!/bin/bash
@@ -86,8 +86,8 @@ function jenkins {
 function bukkit {
     task "Installing $1"
 
-    cd "$TMP"
-    mkdir "$1" && cd "$1" || fail "Failed to create folder for $1"
+    cd "$TMP" || fail "Failed to enter temp folder ($TMP)"
+    (mkdir "$1" && cd "$1") || fail "Failed to create folder for $1"
     get-file "https://dev.bukkit.org/projects/$2/files/latest" "$1.jar" || fail "Failed to download $1"
     mv ./*.jar "$PLUGINS"
 
