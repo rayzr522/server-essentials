@@ -16,7 +16,7 @@ fi
 
 DIR="$PWD"
 PLUGINS="$PWD/plugins/"
-TMP="$(mktemp -d -t server-essentials)"
+TMP="$(mktemp -d -t server-essentials-XXXXXX)"
 
 [ -d "$PLUGINS" ] || mkdir ./plugins/
 
