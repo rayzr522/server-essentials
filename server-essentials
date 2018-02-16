@@ -134,7 +134,11 @@ task "Cleaning up"; clean; taskdone
 ###########################################################################
 
 
-
+echo ""
+echo "Welcome to server-essentials!"
+echo "Written by Rayzr522 & ACA30"
+echo ""
 echo "$(tput smul)$(tput setaf 2)$(tput bold)
 Server setup complete. You can run the server with ./start.sh
 $(tput rmul)$(tput sgr0)"
+echo ""
