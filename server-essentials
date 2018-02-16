@@ -119,6 +119,7 @@ bukkit Vault vault
 bukkit WorldEdit worldedit
 bukkit WorldGuard worldguard
 bukkit Multiverse-Core multiverse-core
+bukkit Holographic-Displays hoographic-displays
 
 task "Installing Multiverse-NetherPortals"
 get-file "https://dev.bukkit.org/projects/multiverse-netherportals/files/772769/download" "$PLUGINS/Multiverse-NetherPortals-2.5.jar" || fail "Failed to install Multiverse-NetherPortals"
