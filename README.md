@@ -51,4 +51,5 @@ curl -fsSL https://raw.githubusercontent.com/Rayzr522/server-essentials/master/s
 ```
 
 ## Credits
+Rayzr522, for the base code.
 My brain, with inspiration for the run-without-installing command from the [yarn installer page](https://yarnpkg.com/en/docs/install#linux).
