@@ -2,10 +2,15 @@
 
 MC_VERSION="1.12.2"
 
+echo 
+echo "$(tput bold)Welcome to server-essentials!"
+echo "Written by Rayzr522 & ACA30"
+echo 
+
 if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$1" = "help" ] || [ "$1" = "?" ]; then
     echo "
 $(tput setaf 1)$(tput bold)Usage:$(tput sgr0) server-essentials [version]
-    $(tput bold)version:$(tput sgr0) The Minecraft server version to install (default: 1.12.2)
+    $(tput bold)version:$(tput sgr0) The Minecraft server version to install (default: $MC_VERSION)
 "
     exit 1
 fi
@@ -101,6 +106,7 @@ function bukkit {
 ###########################################################################
 
 
+
 task "Installing Spigot $MC_VERSION from primary URL"
 get-file "https://cdn.getbukkit.org/spigot/spigot-$MC_VERSION.jar" "spigot-$MC_VERSION.jar" || {
     taskfail "Failed to install Spigot $MC_VERSION from first URL"
@@ -109,7 +115,7 @@ get-file "https://cdn.getbukkit.org/spigot/spigot-$MC_VERSION.jar" "spigot-$MC_V
 }
 taskdone
 
-jenkins EssentialsX "https://ci.drtshock.net" "$PLUGINS" Essentials/target EssentialsChat/target
+jenkins EssentialsX "http://ci.ender.zone" "$PLUGINS" Essentials/target EssentialsChat/target
 jenkins ProtocolLib "http://ci.dmulloy2.net" "$PLUGINS" modules/ProtocolLib/target
 jenkins ViaVersion "http://ci.viaversion.com" "$PLUGINS" jar/target
 
@@ -136,10 +142,6 @@ task "Cleaning up"; clean; taskdone
 
 
 
-echo 
-echo "$(tput bold)Welcome to server-essentials!"
-echo "Written by Rayzr522 & ACA30"
-echo 
 echo "$(tput smul)$(tput setaf 2)$(tput bold)
 Server setup complete. You can run the server with ./start.sh
 $(tput rmul)$(tput sgr0)"
