@@ -135,7 +135,7 @@ task "Cleaning up"; clean; taskdone
 
 
 echo ""
-echo "Welcome to server-essentials!"
+echo "$(tput bold)Welcome to server-essentials!"
 echo "Written by Rayzr522 & ACA30"
 echo ""
 echo "$(tput smul)$(tput setaf 2)$(tput bold)
