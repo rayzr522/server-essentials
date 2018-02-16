@@ -144,6 +144,6 @@ echo "$(tput smul)$(tput setaf 2)$(tput bold)
 Server setup complete. You can run the server with ./start.sh
 $(tput rmul)$(tput sgr0)"
 echo 
-echo "If you would like a plugin added,"
-echo "please create an issue on GitHub"
+echo "If you would like a plugin added,
+please create an issue on GitHub"
 echo 
