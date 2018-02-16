@@ -69,8 +69,8 @@ function jenkins {
 
     cd "$TMP" || fail "Failed to enter temp folder ($TMP)"
     (mkdir "$1" && cd "$1") || fail "Failed to create folder for $1"
-    get-file "$2/job/$1/lastSuccessfulBuild/artifact/*zip*/archive.zip" all.zip || fail "FÏailed to download $1 from $2"
-    (unzip all.zip > /dev/null && mv ./archive/* . && rm -fr ./archive/) || fail "Failed to unzip $1"
+    get-file "$2/job/$1/lastSuccessfulBuild/artifact/*zip*/archive.zip" all.zip || fail "Failed to download $1 from $2 :'( Create an issue for support."
+    (unzip all.zip > /dev/null && mv ./archive/* . && rm -fr ./archive/) || fail "Failed to unzip $1 :'( Create an issue for support"
 
     shift 2
     OUTPUT="$1"
