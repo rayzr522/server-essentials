@@ -1,11 +1,11 @@
 #!/bin/bash
 
-MC_VERSION="1.11.2"
+MC_VERSION="1.12.2"
 
-if [ "$1" = "-h" -o "$1" = "--help" -o "$1" = "help" -o "$1" = "?" ]; then
+if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$1" = "help" ] || [ "$1" = "?" ]; then
     echo "
 $(tput setaf 1)$(tput bold)Usage:$(tput sgr0) server-essentials [version]
-    $(tput bold)version:$(tput sgr0) The MC version to install
+    $(tput bold)version:$(tput sgr0) The Minecraft server version to install (default: 1.12)
 "
     exit 1
 fi
@@ -16,7 +16,7 @@ fi
 
 DIR="$PWD"
 PLUGINS="$PWD/plugins/"
-TMP="$(mktemp -d -t server-essentials)"
+TMP="$(mktemp -d -t server-essentials-XXXXXX)"
 
 [ -d "$PLUGINS" ] || mkdir ./plugins/
 
@@ -28,7 +28,7 @@ function fail {
     taskfail
     clean
 
-    echo -e "\n$(tput setaf 1)Error: $(tput sgr0)$@"
+    echo -e "\n$(tput setaf 1)Error: $(tput sgr0)$*"
     exit 1
 }
 
@@ -37,7 +37,7 @@ function clean {
 }
 
 function configure {
-    cd "$DIR"
+    cd "$DIR" || fail "Could not find server directory"
     [ -f eula.txt ] || echo "eula=true" > eula.txt
 
     echo '#!/bin/bash
@@ -48,7 +48,7 @@ java -Xmx4G -jar spigot-*.jar' > start.sh
 
 # Task methods
 function task {
-    echo -en "$(tput setaf 3)»$(tput sgr0) $(tput bold)$@$(tput sgr0) "
+    echo -en "$(tput setaf 3)»$(tput sgr0) $(tput bold)$*$(tput sgr0) "
 }
 
 function taskdone {
@@ -67,16 +67,16 @@ function get-file {
 function jenkins {
     task "Installing $1 from $2"
 
-    cd "$TMP"
-    mkdir "$1" && cd "$1" || fail "Failed to create folder for $1"
-    get-file "$2/job/$1/lastSuccessfulBuild/artifact/*zip*/archive.zip" all.zip || fail "Failed to download $1 from $2"
-    unzip all.zip > /dev/null && mv ./archive/* . && rm -fr ./archive/ || fail "Failed to unzip $1"
+    cd "$TMP" || fail "Failed to enter temp folder ($TMP)"
+    (mkdir "$1" && cd "$1") || fail "Failed to create folder for $1"
+    get-file "$2/job/$1/lastSuccessfulBuild/artifact/*zip*/archive.zip" all.zip || fail "FÏailed to download $1 from $2"
+    (unzip all.zip > /dev/null && mv ./archive/* . && rm -fr ./archive/) || fail "Failed to unzip $1"
 
     shift 2
     OUTPUT="$1"
     shift
 
-    for folder in $@; do
+    for folder in "$@"; do
         mv ./"$folder"/*.jar "$OUTPUT"
     done
 
@@ -86,8 +86,8 @@ function jenkins {
 function bukkit {
     task "Installing $1"
 
-    cd "$TMP"
-    mkdir "$1" && cd "$1" || fail "Failed to create folder for $1"
+    cd "$TMP" || fail "Failed to enter temp folder ($TMP)"
+    (mkdir "$1" && cd "$1") || fail "Failed to create folder for $1"
     get-file "https://dev.bukkit.org/projects/$2/files/latest" "$1.jar" || fail "Failed to download $1"
     mv ./*.jar "$PLUGINS"
 
@@ -118,9 +118,9 @@ bukkit PermissionsEx permissionsex
 bukkit Vault vault
 bukkit WorldEdit worldedit
 bukkit WorldGuard worldguard
+bukkit Multiverse-Core multiverse-core
 
-task "Installing Multiverse"
-get-file "https://dev.bukkit.org/projects/multiverse-core/files/912081/download" "$PLUGINS/Multiverse-Core-2.5-b717.jar" || fail "Failed to install Multiverse-Core"
+task "Installing Multiverse-NetherPortals"
 get-file "https://dev.bukkit.org/projects/multiverse-netherportals/files/772769/download" "$PLUGINS/Multiverse-NetherPortals-2.5.jar" || fail "Failed to install Multiverse-NetherPortals"
 taskdone
 
