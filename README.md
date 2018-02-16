@@ -27,7 +27,7 @@ Tested on a _Kali Linux VM_, a _Raspberry Pi_, and my _MacBook Pro_ (running _ma
 You can run it without downloading the script to your harddrive:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Rayzr522/server-essentials/master/server-essentials | bash -
+curl -fsSL https://raw.githubusercontent.com/ACA30/server-essentials/master/server-essentials | bash -
 ```
 
 Or you can simply download the script, put it _somewhere_ in your `PATH`, and run it like any other command.
@@ -47,7 +47,7 @@ cd MyServer
 cd ~/Desktop
 mkdir MyServer
 cd MyServer
-curl -fsSL https://raw.githubusercontent.com/Rayzr522/server-essentials/master/server-essentials | bash -
+curl -fsSL https://raw.githubusercontent.com/ACA30/server-essentials/master/server-essentials | bash -
 ```
 
 ## Credits
