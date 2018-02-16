@@ -12,8 +12,11 @@ This is a simple **\*nix** script for installing all the essentials for a simple
 * Vault(https://dev.bukkit.org/projects/vault)
 * WorldEdit(https://dev.bukkit.org/projects/worldedit)
 * WorldGuard(https://dev.bukkit.org/projects/worldguard)
+* Holographic Displays(https://dev.bukkit.org/projects/holographic-displays)
 
 It also creates a simple start script that runs your server with *2GB of RAM*, and automatically sets the EULA to agreed. (*Note: by using this script __you are agreeing to the Mojang EULA__*)
+
+If you would like a plugin added, please create an issue to let me know.
 
 ## Demo
 
