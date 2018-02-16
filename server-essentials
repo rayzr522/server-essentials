@@ -42,7 +42,7 @@ function configure {
 
     echo '#!/bin/bash
 cd "$(dirname "$0")"
-java -Xmx4G -jar spigot-*.jar' > start.sh
+java -Xmx2G -jar spigot-*.jar' > start.sh
     chmod +x start.sh
 }
 

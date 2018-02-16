@@ -13,7 +13,7 @@ This is a simple **\*nix** script for installing all the essentials for a simple
 * WorldEdit(https://dev.bukkit.org/projects/worldedit)
 * WorldGuard(https://dev.bukkit.org/projects/worldguard)
 
-It also creates a simple start script that runs your server with *4GB of RAM*, and automatically sets the EULA to agreed. (*Note: by using this script __you are agreeing to the Mojang EULA__*)
+It also creates a simple start script that runs your server with *2GB of RAM*, and automatically sets the EULA to agreed. (*Note: by using this script __you are agreeing to the Mojang EULA__*)
 
 ## Demo
 
