@@ -2,6 +2,14 @@
 
 MC_VERSION="1.12.2"
 
+echo
+echo "$(tput bold)Welcome to server-essentials!"
+echo "Written by Rayzr522 & ACA30"
+echo
+echo "If you would like a plugin added,
+please create an issue on GitHub"
+echo 
+
 if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$1" = "help" ] || [ "$1" = "?" ]; then
     echo "
 $(tput setaf 1)$(tput bold)Usage:$(tput sgr0) server-essentials [version]
@@ -143,7 +151,4 @@ echo
 echo "$(tput smul)$(tput setaf 2)$(tput bold)
 Server setup complete. You can run the server with ./start.sh
 $(tput rmul)$(tput sgr0)"
-echo 
-echo "If you would like a plugin added,
-please create an issue on GitHub"
 echo 
