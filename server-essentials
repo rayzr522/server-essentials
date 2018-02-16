@@ -37,7 +37,7 @@ function clean {
 }
 
 function configure {
-    cd "$DIR" || fail "Could not find server directory"
+    cd "$DIR" || fail "Could not find server directory :'( Create an issue on GitHub for support."
     [ -f eula.txt ] || echo "eula=true" > eula.txt
 
     echo '#!/bin/bash
@@ -69,8 +69,8 @@ function jenkins {
 
     cd "$TMP" || fail "Failed to enter temp folder ($TMP)"
     (mkdir "$1" && cd "$1") || fail "Failed to create folder for $1"
-    get-file "$2/job/$1/lastSuccessfulBuild/artifact/*zip*/archive.zip" all.zip || fail "Failed to download $1 from $2 :'( Create an issue for support."
-    (unzip all.zip > /dev/null && mv ./archive/* . && rm -fr ./archive/) || fail "Failed to unzip $1 :'( Create an issue for support"
+    get-file "$2/job/$1/lastSuccessfulBuild/artifact/*zip*/archive.zip" all.zip || fail "Failed to download $1 from $2 :'( Create an issue on GitHub for support."
+    (unzip all.zip > /dev/null && mv ./archive/* . && rm -fr ./archive/) || fail "Failed to unzip $1 :'( Create an issue on GitHub for support."
 
     shift 2
     OUTPUT="$1"
@@ -86,9 +86,9 @@ function jenkins {
 function bukkit {
     task "Installing $1"
 
-    cd "$TMP" || fail "Failed to enter temp folder ($TMP)"
-    (mkdir "$1" && cd "$1") || fail "Failed to create folder for $1"
-    get-file "https://dev.bukkit.org/projects/$2/files/latest" "$1.jar" || fail "Failed to download $1"
+    cd "$TMP" || fail "Failed to enter temp folder ($TMP) :'( Create an issue on GitHub for support."
+    (mkdir "$1" && cd "$1") || fail "Failed to create folder for $1 :'( Create an issue on GitHub for support."
+    get-file "https://dev.bukkit.org/projects/$2/files/latest" "$1.jar" || fail "Failed to download $1 :'( Create an issue on GitHub for support."
     mv ./*.jar "$PLUGINS"
 
     taskdone
@@ -103,9 +103,9 @@ function bukkit {
 
 task "Installing Spigot $MC_VERSION from primary URL"
 get-file "https://cdn.getbukkit.org/spigot/spigot-$MC_VERSION.jar" "spigot-$MC_VERSION.jar" || {
-    taskfail "Failed to install Spigot $MC_VERSION from first URL"
+    taskfail "Failed to install Spigot $MC_VERSION from first URL :'( Create an issue on GitHub for support."
     task "Installing Spigot $MC_VERSION from secondary URL"
-    get-file "https://cdn.getbukkit.org/spigot/spigot-$MC_VERSION-R0.1-SNAPSHOT-latest.jar" "spigot-$MC_VERSION.jar" || fail "Failed to install Spigot $MC_VERSION"
+    get-file "https://cdn.getbukkit.org/spigot/spigot-$MC_VERSION-R0.1-SNAPSHOT-latest.jar" "spigot-$MC_VERSION.jar" || fail "Failed to install Spigot $MC_VERSION :'( Create an issue on GitHub for support."
 }
 taskdone
 
@@ -122,7 +122,7 @@ bukkit Multiverse-Core multiverse-core
 bukkit Holographic-Displays hoographic-displays
 
 task "Installing Multiverse-NetherPortals"
-get-file "https://dev.bukkit.org/projects/multiverse-netherportals/files/772769/download" "$PLUGINS/Multiverse-NetherPortals-2.5.jar" || fail "Failed to install Multiverse-NetherPortals"
+get-file "https://dev.bukkit.org/projects/multiverse-netherportals/files/772769/download" "$PLUGINS/Multiverse-NetherPortals-2.5.jar" || fail "Failed to install Multiverse-NetherPortals :'( Create an issue on GitHub for support."
 taskdone
 
 task "Configuring"; configure; taskdone
@@ -142,4 +142,7 @@ echo ""
 echo "$(tput smul)$(tput setaf 2)$(tput bold)
 Server setup complete. You can run the server with ./start.sh
 $(tput rmul)$(tput sgr0)"
+echo ""
+echo "If you would like a plugin added,"
+echo "please create an issue on GitHub"
 echo ""
